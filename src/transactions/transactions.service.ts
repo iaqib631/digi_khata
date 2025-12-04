@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Transaction } from './transactions.entity';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { Benificiary } from '../benificiary/benificiary.entity';
+import { BalanceSummaryDto } from './dtos/balance-summary.dto';
 
 @Injectable()
 export class TransactionsService {
@@ -67,5 +68,34 @@ export class TransactionsService {
         if (result.affected === 0) {
             throw new NotFoundException('Transaction not found');
         }
+    }
+
+    async getBalanceSummary(userId: number, benificiaryId: number): Promise<BalanceSummaryDto> {
+        // Verify beneficiary exists and belongs to user
+        const ben = await this.benificiaryRepo.findOneBy({ id: benificiaryId });
+        if (!ben) throw new NotFoundException('Beneficiary not found');
+        if (ben.userId !== userId) throw new ForbiddenException('Not allowed to access this beneficiary');
+
+        // Get all transactions for this beneficiary
+        const transactions = await this.transactionRepo.find({
+            where: { benificiaryId },
+        });
+
+        // Calculate totals
+        const totalIn = transactions
+            .filter(tx => tx.type === 'in')
+            .reduce((sum, tx) => sum + tx.amount, 0);
+
+        const totalOut = transactions
+            .filter(tx => tx.type === 'out')
+            .reduce((sum, tx) => sum + tx.amount, 0);
+
+        const netBalance = totalIn - totalOut;
+
+        return {
+            totalIn,
+            totalOut,
+            netBalance,
+        };
     }
 }
