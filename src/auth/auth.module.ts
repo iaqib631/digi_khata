@@ -21,6 +21,7 @@ JwtModule.registerAsync({
 }),
   ],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService],
+  exports: [JwtModule, AuthService]
 })
 export class AuthModule {}

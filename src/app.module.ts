@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { BenificiaryModule } from './benificiary/benificiary.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { ConfigModule } from '@nestjs/config';
     autoLoadEntities: true,
     synchronize: false
     }),
-    AuthModule, UsersModule],
+    AuthModule, UsersModule, BenificiaryModule, TransactionsModule],
   controllers: [AppController],
   providers: [AppService],
 })
