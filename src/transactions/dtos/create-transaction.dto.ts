@@ -1,4 +1,4 @@
-import { IsDate, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTransactionDto {
@@ -10,11 +10,12 @@ export class CreateTransactionDto {
     @IsEnum(['in', 'out'])
     type: 'in' | 'out';
 
-    @ApiProperty({})
-    @IsDate()
-    createdAt: Date;
-
-    @ApiProperty({})
+    @ApiProperty({ description: 'Beneficiary id this transaction belongs to' })
     @IsNumber()
-    userId:number;
+    benificiaryId: number;
+
+    @ApiProperty({ required: false, description: 'Optional description' })
+    @IsOptional()
+    @IsString()
+    description?: string;
 }

@@ -1,5 +1,6 @@
-import { User } from "src/users/user.entity";
+import { User } from "../users/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, CreateDateColumn } from "typeorm";
+import { Benificiary } from "../benificiary/benificiary.entity";
 
 @Entity()
 export class Transaction {
@@ -12,8 +13,7 @@ export class Transaction {
     @Column({ type: 'enum', enum: ['in', 'out'] })
     type: 'in' | 'out';
 
-    // @Column({ nullable: true })
-    // description: string;
+
 
     @CreateDateColumn()
     createdAt: Date;
@@ -24,4 +24,11 @@ export class Transaction {
 
     @Column()
     userId: number;
+
+    @ManyToOne(() => Benificiary, ben => ben.id, { nullable: true })
+    @JoinColumn({ name: 'benificiaryId' })
+    benificiary?: Benificiary;
+
+    @Column({ nullable: true })
+    benificiaryId?: number;
 }

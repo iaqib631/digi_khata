@@ -1,7 +1,8 @@
-import { User } from "src/users/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
+import { User } from "../users/user.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Unique } from "typeorm";
 
 @Entity()
+@Unique(['userId', 'email'])
 export class Benificiary {
     @PrimaryGeneratedColumn()
     id:number;
@@ -9,11 +10,11 @@ export class Benificiary {
     @Column()
     name:string;
 
-    @Column({unique: true})
+    @Column()
     email:string;
 
-    @Column()
-    phone: number;
+    @Column({ type: 'varchar', length: 32 })
+    phone: string;
 
     @Column()
     address: string;

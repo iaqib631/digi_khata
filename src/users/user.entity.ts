@@ -1,5 +1,5 @@
-import { Benificiary } from "src/benificiary/benificiary.entity";
-import { Transaction } from "src/transactions/transactions.entity";
+import { Benificiary } from "../benificiary/benificiary.entity";
+import { Transaction } from "../transactions/transactions.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

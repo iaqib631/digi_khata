@@ -1,10 +1,11 @@
 import { Controller, Post, Get, Put, Delete, Body, Param, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { Serialize } from '../interceptors/serialize.interceptor';
+
 import { AuthGuard } from 'src/guards/auth.guard';
 import { BenificiaryService } from './benificiary.service';
 import { CreateBenificiaryDto } from './dtos/create-benificiary.dto';
-import { Benificiary } from './benificiary.entity';
+import { UpdateBenificiaryDto } from './dtos/update-benificiary.dto';
+
 
 @ApiBearerAuth('access-token')
 @Controller('benificiary')
@@ -32,8 +33,9 @@ export class BenificiaryController {
     @ApiParam({ name: 'id', type: Number })
     @ApiOperation({ summary: 'Get a specific beneficiary' })
     @ApiResponse({ status: 200, description: 'Beneficiary details' })
-    async findOne(@Param('id', ParseIntPipe) id: number) {
-        return await this.benificiaryService.findOne(id);
+    async findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
+        const userId = req.user.id;
+        return await this.benificiaryService.findOneForUser(userId, id);
     }
 
     @Put(':id')
@@ -42,17 +44,20 @@ export class BenificiaryController {
     @ApiResponse({ status: 200, description: 'Beneficiary updated successfully' })
     async update(
         @Param('id', ParseIntPipe) id: number,
-        @Body() updateBenificiaryDto: Partial<CreateBenificiaryDto>,
+        @Body() updateBenificiaryDto: UpdateBenificiaryDto,
+        @Request() req,
     ) {
-        return await this.benificiaryService.update(id, updateBenificiaryDto);
+        const userId = req.user.id;
+        return await this.benificiaryService.updateForUser(userId, id, updateBenificiaryDto);
     }
 
     @Delete(':id')
     @ApiParam({ name: 'id', type: Number })
     @ApiOperation({ summary: 'Delete a beneficiary' })
     @ApiResponse({ status: 200, description: 'Beneficiary deleted successfully' })
-    async remove(@Param('id', ParseIntPipe) id: number) {
-        await this.benificiaryService.remove(id);
+    async remove(@Param('id', ParseIntPipe) id: number, @Request() req) {
+        const userId = req.user.id;
+        await this.benificiaryService.removeForUser(userId, id);
         return { message: 'Beneficiary deleted successfully' };
     }
 }
