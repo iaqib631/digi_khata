@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { Benificiary } from './benificiary.entity';
 import { CreateBenificiaryDto } from './dtos/create-benificiary.dto';
 import { UpdateBenificiaryDto } from './dtos/update-benificiary.dto';
+import { Transaction } from '../transactions/transactions.entity';
 
 @Injectable()
 export class BenificiaryService {
     constructor(
         @InjectRepository(Benificiary)
         private benificiaryRepo: Repository<Benificiary>,
+        @InjectRepository(Transaction)
+        private transactionRepo: Repository<Transaction>,
     ) {}
 
     async create(userId: number, createBenificiaryDto: CreateBenificiaryDto):Promise <Benificiary | any> {
@@ -54,10 +57,12 @@ export class BenificiaryService {
 
     async removeForUser(userId: number, id: number) {
         const benificiary = await this.findOneForUser(userId, id);
+        // Delete all related transactions first
+        await this.transactionRepo.delete({ benificiaryId: id });
+        // Then delete the beneficiary
         const result = await this.benificiaryRepo.delete(id);
         if (result.affected === 0) {
             throw new NotFoundException('Beneficiary not found');
         }
-
     }
 }

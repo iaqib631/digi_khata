@@ -1,5 +1,6 @@
 import { User } from "../users/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Unique } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Unique, OneToMany } from "typeorm";
+import { Transaction } from "../transactions/transactions.entity";
 
 @Entity()
 @Unique(['userId', 'email'])
@@ -25,4 +26,7 @@ export class Benificiary {
 
     @Column()
     userId: number;
+
+    @OneToMany(() => Transaction, transaction => transaction.benificiary, { cascade: true, onDelete: 'CASCADE' })
+    transactions: Transaction[];
 }

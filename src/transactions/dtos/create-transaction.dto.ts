@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTransactionDto {
@@ -13,9 +13,4 @@ export class CreateTransactionDto {
     @ApiProperty({ description: 'Beneficiary id this transaction belongs to' })
     @IsNumber()
     benificiaryId: number;
-
-    @ApiProperty({ required: false, description: 'Optional description' })
-    @IsOptional()
-    @IsString()
-    description?: string;
 }
